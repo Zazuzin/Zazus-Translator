@@ -1,0 +1,97 @@
+name: Build Zazus-Translator
+
+on:
+  push:
+    branches:
+      - main
+      - zazu-translate-build
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+      - name: Set up Gradle 9.5.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.5.1"
+      - name: Check language detection and outgoing reply validation
+        run: |
+          mkdir -p build/detection-check
+          javac -encoding UTF-8 -d build/detection-check \
+            src/client/java/uk/co/zazuzin/translate/net/LanguageDetection.java \
+            src/client/java/uk/co/zazuzin/translate/net/LanguageRouting.java \
+            src/client/java/uk/co/zazuzin/translate/net/TranslationOutput.java \
+            src/client/java/uk/co/zazuzin/translate/net/ReplyValidation.java \
+            checks/LanguageDetectionCheck.java
+          java -cp build/detection-check uk.co.zazuzin.translate.net.LanguageDetectionCheck
+      - name: Build
+        run: gradle clean build --stacktrace
+      - name: Package release files
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(sed -n 's/^mod_version=//p' gradle.properties)"
+          minecraft_version="$(sed -n 's/^minecraft_version=//p' gradle.properties)"
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$release_version" ]]; then
+            echo "Tag must match mod_version in gradle.properties"
+            exit 1
+          fi
+          mkdir -p dist
+          jar_name="Zazus-Translator-$release_version-mc$minecraft_version.jar"
+          source_name="Zazus-Translator-$release_version-source.zip"
+          cp "build/libs/$jar_name" dist/
+          git archive --format=zip --output="dist/$source_name" HEAD
+          cd dist
+          sha256sum "$jar_name" "$source_name" > SHA256SUMS.txt
+      - name: Upload release files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zazus-Translator-release-files
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: github.repository == 'Zazuzin/Zazus-Translator' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@v4
+      - name: Download release files
+        uses: actions/download-artifact@v4
+        with:
+          name: Zazus-Translator-release-files
+          path: dist
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" \
+              dist/*.jar dist/*-source.zip dist/SHA256SUMS.txt --clobber
+          else
+            gh release create "$RELEASE_TAG" \
+              --verify-tag --latest \
+              --title "Zazu's Translator $RELEASE_TAG - Minecraft 26.2" \
+              --notes-file RELEASE_NOTES.md \
+              dist/*.jar dist/*-source.zip dist/SHA256SUMS.txt
+          fi
+

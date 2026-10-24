@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "uk.co.zazuzin.translate.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ChatComponentMixin",
+    "ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+
