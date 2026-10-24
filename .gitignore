@@ -6,6 +6,6 @@ run/
 .vscode/
 *.iml
 dist/
-config/
+/config/
 .env
 
