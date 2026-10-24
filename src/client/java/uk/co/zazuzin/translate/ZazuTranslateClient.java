@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.sdl.SDLScancode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.zazuzin.translate.config.TranslateConfig;
@@ -27,9 +28,9 @@ public final class ZazuTranslateClient implements ClientModInitializer {
         KeyMapping.Category category = KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(MOD_ID, "controls"));
         KeyMapping settings = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.zazu_translate.settings", InputConstants.Type.KEYSYM, InputConstants.KEY_F8, category));
+            "key.zazu_translate.settings", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_F8, category));
         KeyMapping reply = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.zazu_translate.reply", InputConstants.Type.KEYSYM, InputConstants.KEY_F9, category));
+            "key.zazu_translate.reply", InputConstants.Type.KEYBOARD, SDLScancode.SDL_SCANCODE_F9, category));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (settings.consumeClick()) {
                 if (client.gui.screen() == null) client.gui.setScreen(new SettingsScreen(null));
