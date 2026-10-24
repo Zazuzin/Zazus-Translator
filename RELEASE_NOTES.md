@@ -1,4 +1,4 @@
-Zazu's Translator 1.0.0 is the first public release for Minecraft 26.2 on Fabric.
+Zazu's Translator 1.0.0 is now available for Minecraft 26.3 on Fabric.
 
 - Automatically translate incoming chat into Minecraft's selected language or a custom target.
 - Reply in a message's detected language through the [Reply XX] button in normal chat.
@@ -6,8 +6,8 @@ Zazu's Translator 1.0.0 is the first public release for Minecraft 26.2 on Fabric
 - Configure MyMemory, DeepL or a LibreTranslate-compatible provider in game.
 - Choose ignored players and whether to translate system messages.
 
-Install **Zazus-Translator-1.0.0-mc26.2.jar** in your instance's mods folder with
-Fabric API. Requires Java 25, Minecraft 26.2 and Fabric Loader 0.19.3 or newer.
+Install **Zazus-Translator-1.0.0-mc26.3.jar** in your instance's mods folder with
+Fabric API. Requires Java 25, Minecraft 26.3 and Fabric Loader 0.20.1 or newer.
 Remove the previous translator JAR before installing.
 
 F8 opens settings. Quick replies use public chat and apply to one submission.

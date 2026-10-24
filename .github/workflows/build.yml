@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - zazu-translate-build
+      - mc26.3
     tags:
       - "v*"
   pull_request:
@@ -24,10 +25,10 @@ jobs:
         with:
           distribution: temurin
           java-version: "25"
-      - name: Set up Gradle 9.5.1
+      - name: Set up Gradle 9.6.0
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "9.5.1"
+          gradle-version: "9.6.0"
       - name: Check language detection and outgoing reply validation
         run: |
           mkdir -p build/detection-check
@@ -46,13 +47,13 @@ jobs:
           set -euo pipefail
           release_version="$(sed -n 's/^mod_version=//p' gradle.properties)"
           minecraft_version="$(sed -n 's/^minecraft_version=//p' gradle.properties)"
-          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$release_version" ]]; then
-            echo "Tag must match mod_version in gradle.properties"
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$release_version-mc$minecraft_version" ]]; then
+            echo "Tag must match mod_version and minecraft_version in gradle.properties"
             exit 1
           fi
           mkdir -p dist
           jar_name="Zazus-Translator-$release_version-mc$minecraft_version.jar"
-          source_name="Zazus-Translator-$release_version-source.zip"
+          source_name="Zazus-Translator-$release_version-mc$minecraft_version-source.zip"
           cp "build/libs/$jar_name" dist/
           git archive --format=zip --output="dist/$source_name" HEAD
           cd dist
@@ -89,8 +90,8 @@ jobs:
               dist/*.jar dist/*-source.zip dist/SHA256SUMS.txt --clobber
           else
             gh release create "$RELEASE_TAG" \
-              --verify-tag --latest \
-              --title "Zazu's Translator $RELEASE_TAG - Minecraft 26.2" \
+              --verify-tag --latest=false \
+              --title "Zazu's Translator $RELEASE_TAG - Minecraft 26.3" \
               --notes-file RELEASE_NOTES.md \
               dist/*.jar dist/*-source.zip dist/SHA256SUMS.txt
           fi

@@ -1,17 +1,19 @@
 # Zazu's Translator
 
-A client-side chat translator for Minecraft 26.2 on Fabric.
+A client-side chat translator for Minecraft 26.3 on Fabric.
 
 Read other players' messages in your language and reply in theirs from normal
 Minecraft chat. The original message stays visible, with a separate translated
 line showing the sender and detected language.
 
+The Minecraft 26.2 version remains available in [v1.0.0](https://github.com/Zazuzin/Zazus-Translator/releases/tag/v1.0.0).
+
 ## Download and install
 
-Download **Zazus-Translator-1.0.0-mc26.2.jar** from
-[Releases](https://github.com/Zazuzin/Zazus-Translator/releases/latest).
+Download **Zazus-Translator-1.0.0-mc26.3.jar** from
+[Releases](https://github.com/Zazuzin/Zazus-Translator/releases/tag/v1.0.0-mc26.3).
 
-You need Minecraft **26.2**, **Java 25**, Fabric Loader **0.19.3 or newer**, and
+You need Minecraft **26.3**, **Java 25**, Fabric Loader **0.20.1 or newer**, and
 [Fabric API](https://modrinth.com/mod/fabric-api).
 
 1. Put the JAR in your Minecraft instance's `mods` folder alongside Fabric API.
@@ -97,7 +99,7 @@ private chat before posting.
 
 ## Build from source
 
-Use JDK 25 and Gradle 9.5.1:
+Use JDK 25 and Gradle 9.6.0:
 
 ```sh
 gradle clean build
